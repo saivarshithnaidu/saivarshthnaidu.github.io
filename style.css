@@ -1,0 +1,947 @@
+/* CSS Reset & Variables */
+:root {
+    --primary-red: #E50914;
+    --primary-hover: #f40612;
+    --bg-black: #141414;
+    --dark-gray: #181818;
+    --light-gray: #b3b3b3;
+    --white: #ffffff;
+    --font-heading: 'Bebas Neue', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --card-width: 250px;
+    --card-height: 140px;
+    --card-scale: 1.5;
+    --transition-speed: 0.3s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-black);
+    color: var(--white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* --- SV CINEMATIC INTRO ANIMATION (Textured + Multi-Layer) --- */
+.intro-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.8s ease-out;
+    overflow: hidden;
+}
+
+.intro-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Film Grain & Vignette Overlay */
+.grain-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    opacity: 0.15;
+    z-index: 10001;
+    mix-blend-mode: overlay;
+    box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.9);
+    /* Vignette */
+}
+
+.sv-logo-container {
+    position: relative;
+    background-color: #000;
+    /* Scale Up during sweep */
+    animation: containerScale 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 
+    LAYER 1: The Base "SV" 
+    - Holds the dark saturated colors (Red -> Purple)
+    - Moves Slower
+*/
+.sv-intro-logo {
+    position: relative;
+    font-family: var(--font-heading);
+    font-size: 15rem;
+    font-weight: 800;
+    letter-spacing: -2px;
+    /* Increased spacing for clarity */
+    line-height: 1;
+
+    /* Base Color Sweep Gradient */
+    background: linear-gradient(180deg,
+            rgba(0, 0, 0, 1) 0%,
+            rgb(139, 0, 0) 20%,
+            /* Deep Red */
+            #E50914 40%,
+            /* Netflix Red */
+            #800080 60%,
+            /* Purple */
+            rgba(0, 0, 0, 1) 80%);
+    background-size: 100% 250%;
+    background-position: 0% -100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    /* Glow - Reduced blur for sharpness */
+    filter: drop-shadow(0 0 5px rgba(229, 9, 20, 0.8));
+
+    /* Animation: Slower Sweep */
+    animation: baseSweep 2.5s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+/* 
+    LAYER 2: The Highlight & Texture Texture "SV"
+    - Uses ::before to duplicate text
+    - Holds the Brights (Yellow/Orange)
+    - Contains the "Fiber Strip" Texture
+    - Moves Faster (Parallax effect)
+*/
+.sv-intro-logo::before {
+    content: attr(data-text);
+    /* Duplicate text */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+
+    /* COMPLEX GRADIENT STACK:
+       1. Vertical Fiber Strip Texture (Repeating Lines) - Made subtler
+       2. Bright Light Sweep (Yellow/Orange)
+    */
+    background:
+        /* Texture: Thin vertical lines - More transparent for clarity */
+        repeating-linear-gradient(90deg,
+            transparent 0px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.1) 3px,
+            transparent 4px),
+        /* Light: The Bright Beam */
+        linear-gradient(180deg,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(255, 255, 0, 0) 5%,
+            /* Start earlier */
+            rgba(255, 100, 0, 0.9) 25%,
+            /* Broaden Orange */
+            /* Bright Orange */
+            rgba(255, 230, 0, 1) 40%,
+            /* Broaden Yellow */
+            /* Hot Yellow Core */
+            rgba(255, 0, 100, 0.8) 65%,
+            /* Extend Magenta */
+            /* Magenta Spill */
+            rgba(0, 0, 0, 0) 85%);
+
+    background-size: 100% 100%, 100% 250%;
+    /* Texture fits, Gradient grows */
+    background-position: 0% 0%, 0% -100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    mix-blend-mode: normal;
+    /* Changed from screen to normal for clearer text */
+    /* Additive lighting removed for solidity */
+    opacity: 1;
+
+    /* Animation: Faster Sweep */
+    animation: highlightSweep 2.4s cubic-bezier(0.3, 0, 0.4, 1) forwards;
+}
+
+/* Keyframes */
+
+@keyframes containerScale {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes baseSweep {
+    0% {
+        background-position: 0% -60%;
+        opacity: 0;
+        filter: drop-shadow(0 0 0px rgba(229, 9, 20, 0));
+    }
+
+    10% {
+        opacity: 1;
+        filter: drop-shadow(0 0 20px rgba(180, 0, 20, 0.6));
+    }
+
+    100% {
+        background-position: 0% 120%;
+        opacity: 1;
+        filter: drop-shadow(0 0 5px rgba(229, 9, 20, 0.2));
+        /* Glow settles */
+    }
+}
+
+@keyframes highlightSweep {
+    0% {
+        background-position: 0% 0%, 0% -80%;
+        /* Start higher up */
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    100% {
+        background-position: 0% 0%, 0% 140%;
+        /* Move further down */
+        opacity: 1;
+    }
+}
+
+.skip-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: transparent;
+    border: 1px solid var(--white);
+    color: var(--white);
+    padding: 8px 16px;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeInSkip 0.5s ease 1.5s forwards;
+    z-index: 10000;
+}
+
+.skip-btn:hover {
+    background: var(--white);
+    color: #000;
+}
+
+@keyframes fadeInSkip {
+    to {
+        opacity: 0.7;
+    }
+}
+
+/* Base fade for contents */
+.fade-in {
+    opacity: 1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 1.2s ease-out forwards;
+}
+
+/* Navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 20px 4%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    transition: background-color 0.4s ease;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 10%, transparent);
+}
+
+.navbar.scrolled {
+    background-color: rgb(20, 20, 20);
+}
+
+.logo span {
+    color: var(--primary-red);
+    font-size: 2rem;
+    font-family: var(--font-heading);
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(229, 9, 20, 0.7);
+    cursor: pointer;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--white);
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--light-gray);
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    height: 85vh;
+    width: 100%;
+    background: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    padding: 0 4%;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.2) 0%, var(--bg-black) 90%);
+    z-index: 1;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 7rem;
+    background: linear-gradient(180deg, transparent, var(--bg-black));
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 0.9;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    color: var(--white);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.8rem 1.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--white);
+    color: black;
+}
+
+.btn-primary:hover {
+    background-color: rgba(255, 255, 255, 0.75);
+}
+
+.btn-secondary {
+    background-color: rgba(109, 109, 110, 0.7);
+    color: var(--white);
+}
+
+.btn-secondary:hover {
+    background-color: rgba(109, 109, 110, 0.4);
+}
+
+/* Row Sections */
+.main-content {
+    position: relative;
+    z-index: 10;
+    margin-top: -50px;
+    /* Pull content up slightly */
+    padding-bottom: 50px;
+    overflow: hidden;
+    /* Prevent horizontal scroll on body */
+}
+
+.row-section {
+    margin-bottom: 3vw;
+    padding: 0 4%;
+    opacity: 0;
+    /* For scroll reveal */
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.row-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.row-title {
+    font-size: 1.4rem;
+    color: #e5e5e5;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s;
+}
+
+.row-section:hover .row-title {
+    color: var(--white);
+}
+
+.row-container {
+    position: relative;
+}
+
+/* Horizontal Scrolling Row */
+.row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 40px 0;
+    /* Space for hover expansion */
+    scroll-behavior: smooth;
+}
+
+/* Hide Scrollbar */
+.row::-webkit-scrollbar {
+    display: none;
+}
+
+.row {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Cards */
+.card {
+    flex: 0 0 auto;
+    width: var(--card-width);
+    height: var(--card-height);
+    background-color: var(--dark-gray);
+    border-radius: 4px;
+    position: relative;
+    transition: transform var(--transition-speed) ease, z-index 0s;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: opacity 0.3s;
+}
+
+/* Specific Card Styles */
+.skill-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+}
+
+.skill-icon {
+    font-size: 3rem;
+    color: var(--primary-red);
+    margin-bottom: 10px;
+}
+
+.edu-card {
+    background: #222;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #333;
+}
+
+.cert-card {
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #222;
+}
+
+.cert-icon {
+    font-size: 2rem;
+    color: #ffd700;
+    /* Gold for Certs */
+    margin-bottom: 8px;
+}
+
+.edu-year {
+    font-size: 0.9rem;
+    color: var(--primary-red);
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Hover Effects (The "Netflix" Pop) */
+.card:hover {
+    transform: scale(var(--card-scale));
+    z-index: 100;
+    /* Bring to front */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+    transition-delay: 0.1s;
+    /* Slight delay to prevent accidental triggers */
+}
+
+/* Only expand nearby cards slightly or handle pushing if needed, 
+   but simplistic scale is very standard for these clones. 
+   We manage overflowing content inside details. */
+
+.card-details {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background: linear-gradient(to top, #141414 10%, transparent);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    font-size: 0.6rem;
+    /* Small text initially */
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card:hover .card-details {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card:hover img {
+    opacity: 0.3;
+    /* Darken bg image to make text readable */
+}
+
+/* Details Typography */
+.card-title {
+    color: var(--white);
+    font-size: 0.8rem;
+    /* Adjusted for scale */
+    font-weight: 700;
+}
+
+.card-desc {
+    color: var(--light-gray);
+    font-size: 0.5rem;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.card-meta {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    font-size: 0.5rem;
+    font-weight: bold;
+    color: #46d369;
+    /* Netflix Match Green */
+}
+
+.age-rating {
+    border: 1px solid var(--light-gray);
+    padding: 0 4px;
+    color: var(--white);
+    font-size: 0.4rem;
+}
+
+.card-tags {
+    margin-bottom: 8px;
+}
+
+.card-tags span {
+    color: var(--white);
+    font-size: 0.5rem;
+}
+
+/* Card Button Group */
+.card-actions-row {
+    margin-top: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.card-btn {
+    text-decoration: none;
+    border-radius: 2px;
+    font-weight: bold;
+    font-size: 0.55rem;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.2s, background 0.2s;
+}
+
+/* Primary Small Button (White) */
+.btn-fill {
+    background: var(--white);
+    color: black;
+    border: 1px solid var(--white);
+}
+
+.btn-fill:hover {
+    background: #e6e6e6;
+    transform: scale(1.05);
+}
+
+/* Secondary Small Button (Outline with Gray/White) */
+.btn-outline {
+    background: rgba(42, 42, 42, 0.6);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--white);
+    transform: scale(1.05);
+}
+
+/* Scroll Handles */
+.handle {
+    background: rgba(20, 20, 20, 0.5);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4%;
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    opacity: 0;
+}
+
+.row-container:hover .handle {
+    opacity: 1;
+}
+
+.handle:hover {
+    background: rgba(20, 20, 20, 0.8);
+    font-size: 2.5rem;
+}
+
+.left-handle {
+    left: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.right-handle {
+    right: 0;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+/* About Section */
+.about-section {
+    padding: 50px 4%;
+    background-color: #000;
+    text-align: center;
+}
+
+.about-content h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-family: var(--font-heading);
+    letter-spacing: 1px;
+}
+
+.about-content p {
+    max-width: 700px;
+    margin: 0 auto 30px;
+    color: var(--light-gray);
+    font-size: 1.1rem;
+}
+
+.contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-btn {
+    color: var(--white);
+    font-size: 1.5rem;
+    transition: color 0.3s, transform 0.3s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #333;
+    padding: 10px 20px;
+    border-radius: 30px;
+}
+
+.social-btn:hover {
+    color: var(--primary-red);
+    border-color: var(--primary-red);
+    transform: translateY(-5px);
+}
+
+/* Footer */
+.main-footer {
+    padding: 20px;
+    text-align: center;
+    color: #555;
+    font-size: 0.8rem;
+    margin-top: 20px;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN (Mobile & Tablet)
+   ========================================= */
+
+/* Tablet (1024px) */
+@media (max-width: 1024px) {
+    .hero-title {
+        font-size: 4rem;
+    }
+
+    .card {
+        width: 220px;
+        height: 130px;
+    }
+}
+
+/* Mobile Devices (768px) */
+@media (max-width: 768px) {
+
+    /* Navbar - Make it scrollable horizontally */
+    .navbar {
+        padding: 15px 5%;
+        flex-direction: column;
+        gap: 15px;
+        background: rgb(20, 20, 20);
+        /* Solid bg for readability */
+    }
+
+    .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+        /* Space for scrollbar */
+        gap: 20px;
+        justify-content: flex-start;
+        /* Align left */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-links::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hero Text */
+    .hero {
+        height: 70vh;
+        background-position: center;
+    }
+
+    .hero-content {
+        width: 100%;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    /* Intro Logo Scale */
+    .sv-intro-logo {
+        font-size: 8rem;
+        /* Smaller logo */
+    }
+
+    .skip-btn {
+        bottom: 20px;
+        right: 20px;
+        padding: 6px 12px;
+        font-size: 0.7rem;
+    }
+
+    /* Stack Cards Vertically (User Request) */
+    .row-container {
+        overflow: visible;
+        /* Allow stack */
+    }
+
+    .row {
+        flex-wrap: wrap;
+        /* Allow wrapping */
+        overflow-x: visible;
+        /* Stop horizontal scroll */
+        justify-content: center;
+        /* Center cards */
+        gap: 20px;
+        padding: 20px 0;
+    }
+
+    .card {
+        width: 100%;
+        /* Full width cards */
+        max-width: 400px;
+        /* But not too wide */
+        height: 200px;
+        /* Taller for mobile touch */
+        flex: 0 0 auto;
+    }
+
+    .handle {
+        display: none;
+        /* No scroll arrows on mobile */
+    }
+
+    /* Ensure text is readable on scaling */
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-desc {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+        /* Subtle scale on mobile */
+        z-index: 10;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Always show details partially or ensure hover works via tap */
+    .card-details {
+        background: linear-gradient(to top, #141414 20%, rgba(20, 20, 20, 0.8));
+    }
+
+    /* Footer */
+    .about-content h2 {
+        font-size: 1.8rem;
+    }
+
+    .contact-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Small Mobile (480px) */
+@media (max-width: 480px) {
+    .sv-intro-logo {
+        font-size: 5rem;
+        /* Even smaller */
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .row-title {
+        font-size: 1.2rem;
+        padding-left: 10px;
+    }
+
+    .row {
+        gap: 15px;
+        padding: 10px;
+    }
+}
